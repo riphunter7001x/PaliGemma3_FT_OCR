@@ -10,10 +10,7 @@ This repository contains the fine-tuning process of **PaliGemma 3**, a Vision-La
 - **Dataset:** Custom OCR dataset for invoice text extraction
 - **Training Hardware:** **NVIDIA L40S GPU**
 
-## **Hardware Specifications**
-| GPU Model          | Temperature | Power Usage | Memory Usage |
-|--------------------|-------------|------------|--------------|
-| NVIDIA L40S       | 27°C        | 31W / 350W | 0MiB / 46068MiB |
+
 
 ## **BLEU Score Evaluation**
 After fine-tuning, the model was evaluated using **BLEU (Bilingual Evaluation Understudy)** metric, achieving the following results:
@@ -38,10 +35,28 @@ After fine-tuning, the model was evaluated using **BLEU (Bilingual Evaluation Un
   - 4-gram: **95.26%**
 - **No Brevity Penalty:** OCR output matches the reference length exactly.
 
+## **Translation Error Rate (TER) Evaluation**
+In addition to BLEU, the model was evaluated using **Translation Error Rate (TER)**, a metric that measures the number of edits required to convert generated text into the reference text. Unlike BLEU, which focuses on word overlap, TER accounts for insertions, deletions, substitutions, and shifts.
+
+```json
+{
+  "score": 6.3312,
+  "num_edits": 39,
+  "ref_length": 616.0
+}
+```
+
+### **Interpretation of TER Score**
+- **TER Score:** **6.33%** (Low error rate, indicating high accuracy)
+- **Number of Edits:** **39** modifications required to align the OCR output with the reference
+- **Reference Length:** **616 words**
+
+A **lower TER score** indicates better translation quality. Given the **low TER score**, the model's performance in OCR-based text generation is highly accurate with minimal errors.
+
 ## **Model Deployment**
 The fine-tuned model has been **pushed to Hugging Face** for public access.
 
-🔗 **[Access the Model on Hugging Face](https://huggingface.co/your-model-link)**
+👉 **[Access the Model on Hugging Face](https://huggingface.co/your-model-link)**
 
 ## **How to Use the Model**
 To use the fine-tuned **PaliGemma 3** model for OCR tasks:
