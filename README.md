@@ -6,7 +6,7 @@ This repository contains the fine-tuning process of **PaliGemma 3**, a Vision-La
 ## **Model Details**
 - **Base Model:** PaliGemma 3
 - **Fine-Tuning Framework:** Hugging Face **SFTTrainer**
-- **Task:** Vision-Language Understanding
+- **Task:** OCR invoices with  Vision-Language Models
 - **Dataset:** Custom OCR dataset for invoice text extraction
 - **Training Hardware:** **NVIDIA L40S GPU**
 
