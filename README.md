@@ -124,7 +124,7 @@ Below is a sample OCR result obtained from a demo input image:
 ## **Model Deployment**
 The fine-tuned model has been **pushed to Hugging Face** for public access.
 
-👉 **[Access the Model on Hugging Face](https://huggingface.co/your-model-link)**
+**[Access the Model on Hugging Face](https://huggingface.co/riphunter7001x/PaliGemma3_FT_OCR)**
 
 ## **How to Use the Model**
 To use the fine-tuned **PaliGemma 3** model for OCR tasks:
