@@ -11,9 +11,9 @@ This repository contains the fine-tuning process of **PaliGemma 3**, a Vision-La
 - **Training Hardware:** **NVIDIA L40S GPU**
 
 ## **Hardware Specifications**
-| GPU Model          | Temperature | Power Usage | Memory Usage |
-|--------------------|-------------|------------|--------------|
-| NVIDIA L40S       | 27°C        | 31W / 350W | 0MiB / 46068MiB |
+| GPU Model         | Memory |
+|-------------------|------------|
+| NVIDIA L40S       | 46068MiB |
 
 ## **Training Details**
 - **Total Epochs:** 50
@@ -77,8 +77,11 @@ A **lower TER score** indicates better translation quality. Given the **low TER 
 ## **Demo Input Image & Extracted Data**
 Below is a sample OCR result obtained from a demo input image:
 
-**Image Path:** `path/to/demo_image.jpg`
+**Test Image:** 
 
+![Alt Text](test/test.png)
+
+**Parsed Image Output:** 
 ```json
 {
     "route": "V183-RZ-924",
@@ -127,16 +130,41 @@ The fine-tuned model has been **pushed to Hugging Face** for public access.
 To use the fine-tuned **PaliGemma 3** model for OCR tasks:
 
 ```python
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+from transformers import AutoProcessor, PaliGemmaForConditionalGeneration
+from PIL import Image
+import torch
+import json
 
-model_name = "your-huggingface-model-name"
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+# Load model and processor
+model_id = "google/paligemma-3b-pt-448"
+peft_adapter_id = "riphunter7001x/PaliGemma3_FT_OCR"
 
-text = "Upload your image or document here"
-inputs = tokenizer(text, return_tensors="pt")
-outputs = model.generate(**inputs)
-print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+model = PaliGemmaForConditionalGeneration.from_pretrained(model_id, device_map="auto")
+processor = AutoProcessor.from_pretrained(model_id)
+model.load_adapter(peft_adapter_id).eval()
+
+TORCH_DTYPE = model.dtype
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Load and process image
+image = Image.open("image.jpg")
+
+prefix = "<image>extract Document data in JSON format"
+
+inputs = processor(
+    text=prefix,
+    images=image,
+    return_tensors="pt"
+).to(TORCH_DTYPE).to(DEVICE)
+
+prefix_length = inputs["input_ids"].shape[-1]
+
+with torch.inference_mode():
+    generation = model.generate(**inputs, max_new_tokens=512, do_sample=False)
+    generation = generation[0][prefix_length:]
+    decoded = processor.decode(generation, skip_special_tokens=True)
+    print(json.dumps(json.loads(decoded), indent=4))
+
 ```
 
 ## **Future Improvements**
